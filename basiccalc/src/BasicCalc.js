@@ -3,8 +3,7 @@ import React, { useState } from "react";
 /**
  * Main container for BasicCalc.
  * PUBLIC_INTERFACE
- * Modernized UI & style: Elevation, flat rounded buttons, modern typography,
- * subtle transitions, compliant color scheme, optimal white space, improved responsiveness.
+ * Lightweight, modern, single-mode calculator UI—no edit mode, only basic arithmetic operations.
  */
 function BasicCalc() {
   // Calculator state
@@ -146,7 +145,7 @@ function BasicCalc() {
     surface: "#fff",
     white: "#fff",
     shadowStrong: "0 8px 32px rgba(33, 150, 243, 0.21), 0 3px 12px rgba(76, 175, 80, 0.13)",
-    shadowSoft: "0 2px 7px rgba(33,150,243,0.06)", // for nested/inset
+    shadowSoft: "0 2px 7px rgba(33,150,243,0.06)",
     borderRadius: "20px",
     btnRadius: "14px",
     focusRing: "#1769aa33",
@@ -272,7 +271,6 @@ function BasicCalc() {
                 } else {
                   hoverStyle.background = "#E3EEFA";
                 }
-                // Flat shadow on hover
                 hoverStyle.boxShadow = "0 3px 13px 0 rgba(33,150,243,0.14)";
 
                 return (
@@ -283,10 +281,9 @@ function BasicCalc() {
                         + (btn.type ? " basiccalc-modern-btn-" + btn.type : "")
                         + (btn.wide ? " basiccalc-modern-btn-wide" : "")
                     }
-                    style={style}
+
                     onClick={btn.action}
                     tabIndex={0}
-                    // Accessible
                     aria-label={
                       btn.label === "÷"
                         ? "divide"
@@ -308,6 +305,7 @@ function BasicCalc() {
                     onBlur={e => {
                       Object.assign(e.currentTarget.style, style);
                     }}
+                    style={style}
                   >
                     {btn.label}
                   </button>

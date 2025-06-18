@@ -2,27 +2,24 @@ import React, { useState } from "react";
 
 /**
  * Main container for BasicCalc.
- * Provides a basic calculator with addition, subtraction, multiplication, and division,
- * responsive layout, and a simple/minimalistic user interface.
- * Uses the specified color scheme: primary (#4CAF50), secondary (#FFC107), accent (#2196F3).
- *
  * PUBLIC_INTERFACE
+ * Modernized UI & style: Elevation, flat rounded buttons, modern typography,
+ * subtle transitions, compliant color scheme, optimal white space, improved responsiveness.
  */
 function BasicCalc() {
-  // State for display value, held operand, pending operation, and flag for resetting input after op
+  // Calculator state
   const [display, setDisplay] = useState("0");
   const [firstOperand, setFirstOperand] = useState(null);
   const [operation, setOperation] = useState(null);
   const [waitingForOperand, setWaitingForOperand] = useState(false);
 
-  // Handle digit (0-9) and '.' button press
   // PUBLIC_INTERFACE
   const inputDigit = (digit) => {
     if (waitingForOperand) {
       setDisplay(digit === "." ? "0." : digit);
       setWaitingForOperand(false);
     } else {
-      // Prevent multiple leading zeros, and only one decimal point
+      // Prevent duplicate decimal, leading zeros
       if (digit === "." && display.includes(".")) return;
       if (display === "0" && digit !== ".") {
         setDisplay(digit);
@@ -46,7 +43,6 @@ function BasicCalc() {
       setOperation(op);
       return;
     }
-
     if (firstOperand === null) {
       setFirstOperand(parseFloat(display));
     } else if (operation) {
@@ -58,7 +54,6 @@ function BasicCalc() {
     setWaitingForOperand(true);
   };
 
-  // Evaluate the expression
   // PUBLIC_INTERFACE
   const evaluate = () => {
     if (operation && firstOperand !== null && !waitingForOperand) {
@@ -70,29 +65,23 @@ function BasicCalc() {
     }
   };
 
-  // Helper: performs calculation for current op
+  // Calculation helper
   const performCalculation = () => {
     const a = firstOperand;
     const b = parseFloat(display);
     let result = a;
-
     switch (operation) {
       case "+":
-        result = a + b;
-        break;
+        result = a + b; break;
       case "-":
-        result = a - b;
-        break;
+        result = a - b; break;
       case "×":
-        result = a * b;
-        break;
+        result = a * b; break;
       case "÷":
-        result = b === 0 ? "Error" : a / b;
-        break;
-      default:
-        break;
+        result = b === 0 ? "Error" : a / b; break;
+      default: break;
     }
-    // Only show up to 10 digits after decimal for floats
+    // Limit decimals for float display
     if (typeof result === "number" && !Number.isInteger(result)) {
       result = parseFloat(result.toFixed(10));
     }
@@ -114,7 +103,7 @@ function BasicCalc() {
     setDisplay(display.charAt(0) === "-" ? display.slice(1) : "-" + display);
   };
 
-  // Calculator buttons
+  // Button grid description
   const buttons = [
     [
       { label: "C", action: clearAll, type: "secondary" },
@@ -147,148 +136,219 @@ function BasicCalc() {
     ],
   ];
 
+  // Color scheme
+  const theme = {
+    primary: "#4CAF50",
+    secondary: "#FFC107",
+    accent: "#2196F3",
+    text: "#11181C",
+    background: "#FAFBFC",
+    surface: "#fff",
+    white: "#fff",
+    shadowStrong: "0 8px 32px rgba(33, 150, 243, 0.21), 0 3px 12px rgba(76, 175, 80, 0.13)",
+    shadowSoft: "0 2px 7px rgba(33,150,243,0.06)", // for nested/inset
+    borderRadius: "20px",
+    btnRadius: "14px",
+    focusRing: "#1769aa33",
+    buttonFlatShadow: "0 2px 5px rgba(76,175,80,.06)",
+  };
+
   return (
-    <div className="basiccalc-root">
-      <div className="basiccalc-calc-container" role="main" aria-label="calculator">
-        <div className="basiccalc-display" data-testid="calc-display">
-          {display}
+    <div className="basiccalc-ui-root" style={{
+      minHeight: '100vh',
+      background: theme.background,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: '32px 0',
+      transition: 'background 0.28s'
+    }}>
+      <div
+        className="basiccalc-modern-container"
+        role="main"
+        aria-label="calculator"
+        style={{
+          background: theme.surface,
+          borderRadius: theme.borderRadius,
+          boxShadow: theme.shadowStrong,
+          minWidth: 312,
+          maxWidth: 375,
+          width: '100%',
+          padding: '38px 20px 26px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 22,
+          alignItems: 'stretch',
+          transition: 'box-shadow 0.22s cubic-bezier(.4,0,.2,1)'
+        }}
+      >
+        {/* Display */}
+        <div
+          className="basiccalc-modern-display"
+          data-testid="calc-display"
+          style={{
+            background: "#F7F8FA",
+            color: display === "Error" ? "#F44336" : theme.text,
+            borderRadius: "12px",
+            fontSize: '2.5rem',
+            fontFamily: 'Menlo, Consolas, Roboto Mono, monospace',
+            padding: '24px 18px 12px 15px',
+            minHeight: 60,
+            fontWeight: 700,
+            letterSpacing: ".09em",
+            boxShadow: theme.shadowSoft + ',inset 0 2px 9px rgba(33,150,243,.07)',
+            textAlign: 'right',
+            marginBottom: 6,
+            wordBreak: 'break-all',
+            transition: 'color 0.17s'
+          }}
+        >
+          <span
+            style={{
+              opacity: display === "Error" ? 0.8 : 1,
+              fontWeight: display === "Error" ? 800 : 700
+            }}>
+            {display}
+          </span>
         </div>
-        <div className="basiccalc-button-panel">
+
+        {/* Button Panel */}
+        <div className="basiccalc-modern-buttons" style={{
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.74em',
+        }}>
           {buttons.map((row, i) => (
-            <div key={i} className="basiccalc-row">
-              {row.map((btn, j) => (
-                <button
-                  key={btn.label}
-                  className={
-                    "basiccalc-btn" +
-                    (btn.type ? " " + "basiccalc-btn-" + btn.type : "") +
-                    (btn.wide ? " basiccalc-btn-wide" : "")
-                  }
-                  onClick={btn.action}
-                  tabIndex={0}
-                  aria-label={btn.label === "÷" ? "divide" : btn.label === "×" ? "multiply" : btn.label}
-                >
-                  {btn.label}
-                </button>
-              ))}
+            <div key={i} className="basiccalc-row" style={{
+              display: 'flex',
+              gap: '0.74em'
+            }}>
+              {row.map((btn, j) => {
+                let style = {
+                  flex: btn.wide ? 2.2 : 1,
+                  border: 'none',
+                  outline: 'none',
+                  borderRadius: theme.btnRadius,
+                  padding: btn.wide ? "16px 0" : "16px 0",
+                  fontSize: '1.25rem',
+                  fontWeight: 600,
+                  fontFamily: "'Inter', 'Roboto', 'Arial', sans-serif",
+                  background: '#F2F4F7',
+                  color: theme.text,
+                  margin: 0,
+                  cursor: 'pointer',
+                  boxShadow: theme.buttonFlatShadow,
+                  userSelect: 'none',
+                  transition: 'background 0.16s, box-shadow 0.17s, color 0.14s',
+                  position: 'relative',
+                  minWidth: 0,
+                };
+                // Button type color
+                if (btn.type === "primary") {
+                  style.background = theme.primary;
+                  style.color = theme.white;
+                  style.boxShadow = "0 2.5px 10px rgba(76,175,80,0.11)";
+                } else if (btn.type === "secondary") {
+                  style.background = theme.secondary;
+                  style.color = "#775205";
+                  style.fontWeight = 700;
+                  style.boxShadow = "0 2px 7px rgba(255,193,7,0.08)";
+                } else if (btn.type === "accent") {
+                  style.background = theme.accent;
+                  style.color = theme.white;
+                  style.boxShadow = "0 2.5px 12px rgba(33,150,243,.10)";
+                }
+
+                // Button hover/focus color (using inline or CSS :hover for fallback)
+                const hoverStyle = {};
+                if (btn.type === "primary") {
+                  hoverStyle.background = "#388E3C";
+                } else if (btn.type === "secondary") {
+                  hoverStyle.background = "#FFE082";
+                  hoverStyle.color = "#7d5a07";
+                } else if (btn.type === "accent") {
+                  hoverStyle.background = "#1769aa";
+                } else {
+                  hoverStyle.background = "#E3EEFA";
+                }
+                // Flat shadow on hover
+                hoverStyle.boxShadow = "0 3px 13px 0 rgba(33,150,243,0.14)";
+
+                return (
+                  <button
+                    key={btn.label}
+                    className={
+                      "basiccalc-modern-btn"
+                        + (btn.type ? " basiccalc-modern-btn-" + btn.type : "")
+                        + (btn.wide ? " basiccalc-modern-btn-wide" : "")
+                    }
+                    style={style}
+                    onClick={btn.action}
+                    tabIndex={0}
+                    // Accessible
+                    aria-label={
+                      btn.label === "÷"
+                        ? "divide"
+                        : btn.label === "×"
+                          ? "multiply"
+                          : btn.label
+                    }
+                    onMouseOver={e => {
+                      Object.assign(e.currentTarget.style, hoverStyle);
+                    }}
+                    onFocus={e => {
+                      Object.assign(e.currentTarget.style, hoverStyle, {
+                        boxShadow: `${hoverStyle.boxShadow}, 0 0 0 3px ${theme.focusRing}`
+                      });
+                    }}
+                    onMouseOut={e => {
+                      Object.assign(e.currentTarget.style, style);
+                    }}
+                    onBlur={e => {
+                      Object.assign(e.currentTarget.style, style);
+                    }}
+                  >
+                    {btn.label}
+                  </button>
+                );
+              })}
             </div>
           ))}
         </div>
+        {/* Calculator Label for modern look */}
+        <span style={{
+          fontFamily: "'Inter','Roboto','Arial',sans-serif",
+          color: "#7A869A",
+          opacity: 0.70,
+          textAlign: "center",
+          fontSize: "1rem",
+          marginTop: 18,
+          fontWeight: 400,
+          letterSpacing: ".1em",
+          lineHeight: "1.3"
+        }}>
+          <span style={{ color: theme.accent, fontWeight: 600, fontSize: "1rem" }}>BASIC CALC</span>
+        </span>
       </div>
-
-      {/* Internal styles for the calculator */}
+      {/* Responsive overrides */}
       <style>{`
-        .basiccalc-root {
-          min-height: 100vh;
-          background: #fafbfc;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 32px 8px;
-        }
-        .basiccalc-calc-container {
-          box-shadow: 0 4px 24px rgba(33, 150, 243, 0.11), 0 1.5px 6px rgba(76, 175, 80, 0.08);
-          background: #fff;
-          border-radius: 16px;
-          padding: 28px 16px 18px 16px;
-          display: flex;
-          flex-direction: column;
-          min-width: 320px;
-          width: 100%;
-          max-width: 350px;
-        }
-        .basiccalc-display {
-          background: #f5f5f5;
-          color: #222;
-          padding: 18px 14px 12px 14px;
-          font-size: 2.3rem;
-          border-radius: 10px;
-          box-shadow: inset 0 2px 7px rgba(33,150,243,0.045);
-          margin-bottom: 17px;
-          min-height: 48px;
-          text-align: right;
-          word-break: break-all;
-          letter-spacing: 0.08em;
-          font-weight: 600;
-          font-family: 'Menlo', 'Consolas', 'Roboto Mono', monospace;
-        }
-        .basiccalc-button-panel {
-          width: 100%;
-        }
-        .basiccalc-row {
-          display: flex;
-          width: 100%;
-          gap: 0.6em;
-          margin-bottom: 0.57em;
-        }
-        .basiccalc-row:last-child {
-          margin-bottom: 0;
-        }
-        .basiccalc-btn {
-          flex: 1 1 0px;
-          padding: 15px 0;
-          font-size: 1.28rem;
-          font-weight: 500;
-          border-radius: 7px;
-          border: none;
-          background: #e9ecef;
-          color: #222;
-          margin: 0;
-          outline: none;
-          box-shadow: 0 2px 3px rgba(33,150,243,0.045);
-          cursor: pointer;
-          transition: background 0.13s, box-shadow 0.14s;
-          user-select: none;
-        }
-        .basiccalc-btn:hover, .basiccalc-btn:focus {
-          background: #c0e1e6;
-        }
-        .basiccalc-btn-primary {
-          background: #4caf50;
-          color: #fff;
-          box-shadow: 0 2.5px 7px rgba(76,175,80,.11);
-        }
-        .basiccalc-btn-primary:hover,
-        .basiccalc-btn-primary:focus {
-          background: #388e3c;
-        }
-        .basiccalc-btn-secondary {
-          background: #ffc107;
-          color: #725205;
-        }
-        .basiccalc-btn-secondary:hover,
-        .basiccalc-btn-secondary:focus {
-          background: #ffe082;
-        }
-        .basiccalc-btn-accent {
-          background: #2196f3;
-          color: #fff;
-        }
-        .basiccalc-btn-accent:hover,
-        .basiccalc-btn-accent:focus {
-          background: #1769aa;
-        }
-        .basiccalc-btn-wide {
-          flex: 2.1 1 0;
-        }
         @media (max-width: 480px) {
-          .basiccalc-calc-container {
-            min-width: unset;
-            width: 100%;
-            max-width: 99vw;
-            padding: 10vw 3vw;
+          .basiccalc-modern-container {
+            min-width: unset !important;
+            width: 99vw !important;
+            max-width: 100vw !important;
+            padding: 5vw 2vw 7vw 2vw !important;
           }
-          .basiccalc-display {
-            font-size: 1.6rem;
-            padding: 9px 6px 7px 8px;
-            min-height: 33px;
+          .basiccalc-modern-display {
+            font-size: 1.4rem !important;
+            min-height: 36px !important;
+            padding: 13px 7px 7px 7px !important;
           }
-          .basiccalc-row {
-            gap: 0.17em;
-          }
+          .basiccalc-modern-btn,
           .basiccalc-btn {
-            padding: 10px 0;
-            font-size: 1.08rem;
+            padding: 11px 0 !important;
+            font-size: 1.02rem !important;
           }
         }
       `}</style>
